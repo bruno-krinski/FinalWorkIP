@@ -7,6 +7,7 @@ import time
 import datetime as dt
 import numpy as np
 import mahotas as mh
+from sklearn import preprocessing
 from skimage import feature
 from mahotas.features import lbp
 
@@ -17,10 +18,6 @@ class LBP:
         self.method = method
 
     def describe(self, image):
-        #features = feature.local_binary_pattern(image,
-        #                                        self.num_points,
-        #                                        self.radius,
-        #                                        method=self.method)
         return lbp(image, self.radius, self.num_points)
 
 class Image:
@@ -42,18 +39,23 @@ def read_image_file(file_name):
             images.append(image)
 
 def describe_images(path, images,out_file):
+    features = []
     lbp = LBP(8, 1, "default")
     out = open(out_file, "w+")
-    
-    for image in tqdm.tqdm(images):
+    for image in images:
         img = cv2.imread(path + image.name, 0)
-    
-        features = lbp.describe(img)
-        my_string = ""
-        for f in features:
+        features.append(lbp.describe(img))
+
+   # min_max_scaler = preprocessing.MinMaxScaler()
+   # features = min_max_scaler.fit_transform(features)
+
+    for i in range(0,len(features)):
+        my_string = images[i].label + ' '        
+        for f in features[i]:
             my_string += str(f) + ' '
-        my_string += image.label + '\n'
+        my_string += '\n'
         out.write(my_string)
+        #print(features[0])
     out.close()
 
 def main(argv):
