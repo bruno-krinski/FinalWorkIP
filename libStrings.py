@@ -1,4 +1,4 @@
 #!usr/bin/python
 
 inputError = "Input Error!"
-helpInput = "Use mode: python splitBase.py <path to images>"
+gf_helpInput = "Use mode: python genFeatures.py <path to images>"
