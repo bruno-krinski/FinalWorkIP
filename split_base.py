@@ -1,22 +1,19 @@
 #!usr/bin/python
 
-"""This module is responsible to split the base of trees in 60% and 40%"""
-
 import random
 
 def main():
     """Funcion main"""
-    labels = []
-    labels.append("Apuleia")
-    labels.append("Aspidosperma")
-    labels.append("Astronium")
-    labels.append("Byrsonima")
-    labels.append("Calophyllum")
-    labels.append("Cecropia")
-    labels.append("Cedrelinga")
-    labels.append("Cochlospermum")
-    labels.append("Combretum")
-    labels.append("Copaifera")
+    labels = ['Apuleia',
+              'Aspidosperma',
+              'Astronium',
+              'Byrsonima',
+              'Calophyllum',
+              'Cecropia',
+              'Cedrelinga',
+              'Cochlospermum',
+              'Combretum',
+              'Copaifera']
 
     train = open("training.txt", "w+")
     val = open("validation.txt", "w+")

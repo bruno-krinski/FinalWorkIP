@@ -10,6 +10,10 @@ import mahotas as mh
 from sklearn import preprocessing
 from skimage import feature
 from mahotas.features import lbp
+from skimage import feature
+import numpy as np
+from scipy.stats import itemfreq
+from collections import Counter
 
 class LBP:
     def __init__(self, num_points, radius, method):
@@ -18,7 +22,11 @@ class LBP:
         self.method = method
 
     def describe(self, image):
-        return lbp(image, self.radius, self.num_points)
+        #return lbp(image, self.radius, self.num_points)
+        lbp = feature.local_binary_pattern(image,self.num_points,
+                                           self.radius,method=self.method)
+        hist = itemfreq(lbp.ravel())
+        return hist[:,1]
 
 class Image:
     def __init__(self, name, label):
@@ -40,15 +48,15 @@ def read_image_file(file_name):
 
 def describe_images(path, images,out_file):
     features = []
-    lbp = LBP(8, 1, "default")
+    lbp = LBP(8, 1, "nri_uniform")
     out = open(out_file, "w+")
     for image in images:
         img = cv2.imread(path + image.name, 0)
+        #cv2.imshow('img',img)
+        #cv2.waitKey(0)
         features.append(lbp.describe(img))
-
-   # min_max_scaler = preprocessing.MinMaxScaler()
-   # features = min_max_scaler.fit_transform(features)
-
+        #print(lbp.describe(img))
+  
     for i in range(0,len(features)):
         my_string = images[i].label + ' '        
         for f in features[i]:
@@ -56,7 +64,7 @@ def describe_images(path, images,out_file):
         my_string += '\n'
         out.write(my_string)
         #print(features[0])
-    out.close()
+   # out.close()
 
 def main(argv):
     if len(argv) != 4:

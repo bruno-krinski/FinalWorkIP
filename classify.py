@@ -43,27 +43,28 @@ def svm_function(trainX,trainY,testX,testY):
     #clf.fit(trainX,trainY)
     svr = svm.SVC()
     clf = GridSearchCV(svr, parameters)
+    print(clf)
     clf.fit(trainX, trainY)
     result = clf.predict(testX)
     print_result(testY,result) 
 
 def main(argv):
-    """if(len(argv) != 4):
+    if(len(argv) != 4):
         print("Input Error:")
         print("Use Mode: ./classify <classifier> <train file> <teste file>")
         exit()
-    """
-    train_features, train_labels = read_file(argv[1])
-    test_features, test_labels = read_file(argv[2])
+    
+    train_features, train_labels = read_file(argv[2])
+    test_features, test_labels = read_file(argv[3])
 
     #min_max_scaler = preprocessing.MinMaxScaler()
     #train_features = min_max_scaler.fit_transform(train_features)
     #test_features = min_max_scaler.transform(test_features)
     #test_features = min_max_scaler.fit_transform(test_features)
     
-    if(argv[3] == "knn"):
+    if(argv[1] == "knn"):
         knn_function(train_features,train_labels,test_features,test_labels)
-    elif(argv[3] == "svm"):
+    elif(argv[1] == "svm"):
         svm_function(train_features,train_labels,test_features,test_labels)
         
 
