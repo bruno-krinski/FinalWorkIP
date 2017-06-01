@@ -1,75 +1,76 @@
-#!usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import sys
-import datetime as dt
-import numpy as np
+
+import random
 from sklearn import svm
-from sklearn.model_selection import GridSearchCV
+from sources.classes import *
 from sklearn import preprocessing
-from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier as knc
 
-def read_file(file_name):
-    my_file = open(file_name, "r")
-    features = []
-    labels = []
 
+def readData(file_name):
+    data = File(file_name, "r")
+    data_features = []
+    data_labels = []
     while True:
-        my_string = my_file.readline().split()
-        if len(my_string) == 0:
-            return features,labels
+        x, tam = data.readList()
+        if tam == 0:
+            return data_features, data_labels
         else:
-            labels.append(my_string[0])
-            features.append(list(map(float,my_string[1:len(my_string)])))
-                   
-def print_result(true_result,predict_result):
-    print("Confusion Matrix:")
-    print(confusion_matrix(true_result,predict_result))
-    print("Result:",accuracy_score(true_result,predict_result))
+            data_labels.append(x[0])
+            data_features.append(x[1:len(x)])
 
 
+def knn_function(train_features, train_labels, test_features, test_labels):
+  knn = knc(n_neighbors=5)
+  knn.fit(train_features, train_labels)
+  result = knn.predict(test_features)
+  print("KNN")
+  print("Confusion Matrix: ")
+  print(confusion_matrix(test_labels,result))
+  print("Accuracy: ",accuracy_score(test_labels,result))
 
-def knn_function(trainX,trainY,testX,testY):
-    knn = knc(n_neighbors=3)
-    #print(trainY)
-    knn.fit(trainX,trainY)
-    result = knn.predict(testX)
-    print_result(testY,result)
 
-def svm_function(trainX,trainY,testX,testY):
-    parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
-    #clf = svm.SVC()
-    #clf.fit(trainX,trainY)
+def svm_function(train_features, train_labels, test_features, test_labels):
+    parameters = {'kernel': ('linear', 'rbf'), 'C': [1, 10]}
+    #svr = svm.SVC(C=10, kernel='linear')
     svr = svm.SVC()
-    clf = GridSearchCV(svr, parameters)
-    print(clf)
-    clf.fit(trainX, trainY)
-    result = clf.predict(testX)
-    print_result(testY,result) 
+    clf = GridSearchCV(svr, parameters).fit(train_features, train_labels)
+    # print(clf.best_params_)
+    result = clf.predict(test_features)
+    print("SVM")
+    print("Confusion Matrix: ")
+    print(confusion_matrix(test_labels,result))
+    print("Accuracy: ",accuracy_score(test_labels,result))
 
-def main(argv):
-    if(len(argv) != 4):
-        print("Input Error:")
-        print("Use Mode: ./classify <classifier> <train file> <teste file>")
-        exit()
-    
-    train_features, train_labels = read_file(argv[2])
-    test_features, test_labels = read_file(argv[3])
 
-    #min_max_scaler = preprocessing.MinMaxScaler()
-    #train_features = min_max_scaler.fit_transform(train_features)
-    #test_features = min_max_scaler.transform(test_features)
-    #test_features = min_max_scaler.fit_transform(test_features)
-    
-    if(argv[1] == "knn"):
-        knn_function(train_features,train_labels,test_features,test_labels)
-    elif(argv[1] == "svm"):
-        svm_function(train_features,train_labels,test_features,test_labels)
-        
+def classify():
 
-if __name__ == "__main__":
-    init = dt.datetime.now()
-    main(sys.argv)
-    end = dt.datetime.now()
-    print("Time:",end - init)
+  data = ['features/lbp_default_train.txt',
+          'features/lbp_ror_train.txt',
+          'features/lbp_uniform_train.txt',
+          'features/lbp_nri_uniform_train.txt']
+	
+  for d in data:
+    print('======================================================================')
+    print(d)
+    data_features, data_labels = readData(d)
+    min_max_scaler = preprocessing.MinMaxScaler()
+    data_features = min_max_scaler.fit_transform(data_features)
+
+    for i in range(0, 10):
+      rand = random.randint(1, 100)
+      train_features,test_features,train_labels,test_labels = train_test_split(
+                                                                 data_features,
+	                                                         data_labels,
+	                                                         test_size=0.4,
+	                                                         random_state=rand)
+      
+      svm_function(train_features, train_labels, test_features, test_labels)
+      knn_function(train_features, train_labels, test_features, test_labels)
+    print('======================================================================')	        
