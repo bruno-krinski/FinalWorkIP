@@ -8,10 +8,10 @@ from sources.classes import *
 from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier as knc
-
 
 def readData(file_name):
     data = File(file_name, "r")
@@ -48,13 +48,24 @@ def svm_function(train_features, train_labels, test_features, test_labels):
     print(confusion_matrix(test_labels,result))
     print("Accuracy: ",accuracy_score(test_labels,result))
 
+def mlp_function(train_features, train_labels, test_features, test_labels):
+  mlp = MLPClassifier()
+  mlp.fit(train_features, train_labels)
+  result = mlp.predict(test_features)
+  print("MLP")
+  print("Confusion Matrix: ")
+  print(confusion_matrix(test_labels,result))
+  print("Accuracy: ",accuracy_score(test_labels,result))
+
 
 def classify():
 
-  data = ['features/lbp_default_train.txt',
+  """data = ['features/lbp_default_train.txt',
           'features/lbp_ror_train.txt',
           'features/lbp_uniform_train.txt',
-          'features/lbp_nri_uniform_train.txt']
+          'features/lbp_nri_uniform_train.txt',
+          'features/glcm_train.txt']"""
+  data = ['features/lbp_default_train.txt']
 	
   for d in data:
     print('======================================================================')
@@ -63,14 +74,14 @@ def classify():
     min_max_scaler = preprocessing.MinMaxScaler()
     data_features = min_max_scaler.fit_transform(data_features)
 
-    for i in range(0, 10):
+    for i in range(0, 1):
       rand = random.randint(1, 100)
       train_features,test_features,train_labels,test_labels = train_test_split(
-                                                                 data_features,
-	                                                         data_labels,
-	                                                         test_size=0.4,
-	                                                         random_state=rand)
+                                                              data_features,
+                                                              data_labels,
+                                                              test_size=0.4,
+                                                              random_state=rand)
       
-      svm_function(train_features, train_labels, test_features, test_labels)
-      knn_function(train_features, train_labels, test_features, test_labels)
+      mlp_function(train_features, train_labels, test_features, test_labels)
+      #knn_function(train_features, train_labels, test_features, test_labels)
     print('======================================================================')	        
