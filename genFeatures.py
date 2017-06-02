@@ -66,9 +66,9 @@ def extractFeatures():
     images = readImages(file_name)
     
     method = ['default', 'ror', 'uniform', 'nri_uniform']
-    for m in method:
+    """for m in method:
     	output_file_name = 'lbp_' + m + '_train.txt'  
     	lbpFeaturesVector(images, images_path, output_file_name, m)
-    
-    #output_file_name = 'glcm_train.txt'
-    #glcmFeaturesVector(images, images_path, output_file_name)
+    """
+    output_file_name = 'glcm_train.txt'
+    glcmFeaturesVector(images, images_path, output_file_name)

@@ -65,7 +65,7 @@ def classify():
           'features/lbp_uniform_train.txt',
           'features/lbp_nri_uniform_train.txt',
           'features/glcm_train.txt']"""
-  data = ['features/lbp_default_train.txt']
+  data = ['features/glcm_train.txt']
 	
   for d in data:
     print('======================================================================')
@@ -83,5 +83,6 @@ def classify():
                                                               random_state=rand)
       
       mlp_function(train_features, train_labels, test_features, test_labels)
-      #knn_function(train_features, train_labels, test_features, test_labels)
+      knn_function(train_features, train_labels, test_features, test_labels)
+      svm_function(train_features, train_labels, test_features, test_labels)
     print('======================================================================')	        
