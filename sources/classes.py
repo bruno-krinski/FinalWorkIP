@@ -3,6 +3,7 @@
 
 
 import numpy as np
+import mahotas.features
 from skimage import feature
 from scipy.stats import itemfreq
 from skimage.feature import greycomatrix, greycoprops
@@ -15,13 +16,10 @@ class LBP:
     self.method = method
 
   def describe(self, image):
-    x = feature.local_binary_pattern(image, 
-                                     self.num_points, 
-                                     self.radius, 
+    x = feature.local_binary_pattern(image,
+                                     self.num_points,
+                                     self.radius,
                                      method=self.method)
-    #histogram = itemfreq(x.ravel())
-    #return histogram[:, 1]/sum(histogram[:, 1]	)
-    #print(x)
     n_bins = int(x.max() + 1)
     hist,_ = np.histogram(x,normed=True,bins = n_bins,range=(0,n_bins))
     return hist
@@ -32,17 +30,22 @@ class GLCM:
     self.angles = angles
     self.method = method
     self.levels = levels
- 
+
   def describe(self, image):
-    x = greycomatrix(image, 
-                     self.distances, 
-                     self.angles, 
+    x = greycomatrix(image,
+                     self.distances,
+                     self.angles,
                      levels=self.levels,
-                     normed=True, 
+                     normed=True,
                      symmetric=True)
     x = greycoprops(x, self.method)
     return x
-                
+
+
+class Haralick:
+    def describe(self, image):
+        return mahotas.features.haralick(image)
+
 
 class Image:
   def __init__(self, name, label):
@@ -56,7 +59,7 @@ class File:
     self.__file = open(name, mode)
 
   def __del__(self):
-    self.__file.close() 
+    self.__file.close()
 
   def writeString(self, s):
     self.__file.write(s)
@@ -67,4 +70,4 @@ class File:
 
   def writeList(self, list_to_write):
     for l in list_to_write:
-      self.__file.write(l)
+      self.__file.write(str(l))
